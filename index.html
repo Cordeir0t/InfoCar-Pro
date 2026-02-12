@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>InfoCar  | Dashboard Executivo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* MESMO CSS DARK/BLUE DO SEU INDEX/RELATÓRIOS */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #081862 0%, #00082a 100%);
+      min-height: 100vh; padding: 20px; color: #e4edff;
+    }
+    .topo { 
+      background: rgb(11, 11, 11); padding: 24px; border-radius: 15px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 24px; 
+      display: flex; justify-content: space-between; align-items: center; 
+    }
+    .logo h1 { color: #2563eb; font-size: 2.2em; font-weight: 700; }
+    .logo span { color: #c7cfdd; font-weight: 500; font-size: 1.1em; }
+    nav { display: flex; gap: 24px; }
+    nav a { 
+      color: #c7cfdd; text-decoration: none; font-weight: 600; 
+      padding: 8px 16px; border-radius: 8px; transition: all 0.3s;
+    }
+    nav a:hover { 
+      color: #2563eb; background: rgba(37,99,235,0.1); transform: translateY(-1px);
+    }
+    
+    .container { max-width: 1400px; margin: 0 auto; }
+    .card { 
+      background: rgb(15, 15, 25); border: 1px solid #1a1a2e; 
+      border-radius: 15px; padding: 32px; margin-bottom: 24px; 
+      box-shadow: 0 15px 35px rgba(1, 39, 255, 0.3); 
+    }
+    h2 { 
+      color: #e4edff; margin-bottom: 28px; border-bottom: 3px solid #2563eb; 
+      padding-bottom: 12px; font-size: 1.8em; font-weight: 600;
+    }
+    
+    /* MÉTRICAS CARDS */
+    .metricas-grid { 
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      gap: 24px; margin-bottom: 32px;
+    }
+    .metrica-card { 
+      background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4a 100%); 
+      padding: 28px; border-radius: 16px; border: 1px solid #3a3a5a;
+      transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden;
+    }
+    .metrica-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+    }
+    .metrica-card:hover { 
+      transform: translateY(-4px); box-shadow: 0 20px 40px rgba(37,99,235,0.3);
+      border-color: #2563eb;
+    }
+    .metrica-titulo { 
+      color: #94a3b8; font-weight: 500; font-size: 0.95em; margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .metrica-valor { 
+      font-size: 2.5em; font-weight: 700; margin-bottom: 4px;
+    }
+    .metrica-os { color: #60a5fa; }
+    .metrica-estoque { color: #f59e0b; }
+    .metrica-faturamento { color: #10b981; }
+    .metrica-clientes { color: #8b5cf6; }
+    
+    #graficoReparos { 
+      background: #1a1a2e; border-radius: 12px; padding: 24px; 
+      max-height: 350px;
+    }
+    
+    /* LISTA OS */
+    #buscaPlaca { 
+      width: 100%; padding: 16px; background: #1a1a2e; border: 2px solid #2a2a4a; 
+      border-radius: 12px; color: #e4edff; font-size: 16px; margin-bottom: 20px;
+    }
+    #buscaPlaca:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+    
+    #listaOS { 
+      max-height: 450px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;
+    }
+    .os-item { 
+      background: rgba(37, 99, 235, 0.1); border: 1px solid #2a2a4a; 
+      border-left: 4px solid #2563eb; padding: 24px; border-radius: 12px; 
+      cursor: pointer; transition: all 0.3s;
+    }
+    .os-item:hover { 
+      background: rgba(37, 99, 235, 0.2); transform: translateX(4px);
+      box-shadow: 0 10px 30px rgba(37,99,235,0.2);
+    }
+    .os-header { 
+      font-weight: 700; font-size: 1.3em; color: #e4edff; margin-bottom: 8px;
+    }
+    .os-detalhes { 
+      display: flex; gap: 20px; color: #c7cfdd; font-size: 0.95em; flex-wrap: wrap;
+    }
+    .os-status { 
+      padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 600;
+    }
+    .status-aberta { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .status-concluida { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    
+    .rodape { 
+      text-align: center; padding: 24px; color: #93c5fd; background: rgb(11,11,11); 
+      border-radius: 15px; margin-top: 24px; font-size: 0.9em;
+    }
+    
+    @media (max-width: 768px) { 
+      .metricas-grid { grid-template-columns: 1fr; }
+      .os-detalhes { flex-direction: column; gap: 4px; }
+      body { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="logo">
+      <h1>InfoCar</h1>
+      <span>Dashboard Executivo - Tempo Real</span>
+    </div>
+    <nav>
+      <a href="os.html">Ordens de Serviço</a>
+      <a href="estoque.html">Gestão Estoque</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="relatorios.html">Relatórios</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- MÉTRICAS AO VIVO -->
+    <section class="card">
+      <h2>Dashboard Operacional</h2>
+      <div class="metricas-grid">
+        <div class="metrica-card" onclick="window.location.href='os.html'">
+          <div class="metrica-titulo">OS Abertas</div>
+          <div class="metrica-valor metrica-os" id="osAbertas">12</div>
+          <div style="color:#94a3b8;font-size:0.9em;">+3 hoje</div>
+        </div>
+        <div class="metrica-card" onclick="alert('Itens em estoque crítico')">
+          <div class="metrica-titulo">Estoque Crítico</div>
+          <div class="metrica-valor metrica-estoque" id="estoqueCritico">5</div>
+          <div style="color:#94a3b8;font-size:0.9em;">Alerte fornecedores</div>
+        </div>
+        <div class="metrica-card" onclick="alert('Faturamento detalhado')">
+          <div class="metrica-titulo">Faturamento Hoje</div>
+          <div class="metrica-valor metrica-faturamento" id="faturamento">R$15.420</div>
+          <div style="color:#94a3b8;font-size:0.9em;">+18% vs ontem</div>
+        </div>
+        <div class="metrica-card" onclick="alert('Novos cadastros')">
+          <div class="metrica-titulo">Clientes Novos</div>
+          <div class="metrica-valor metrica-clientes" id="clientesNovos">8</div>
+          <div style="color:#94a3b8;font-size:0.9em;">Este mês</div>
+        </div>
+      </div>
+      <canvas id="graficoReparos"></canvas>
+    </section>
+
+    <!-- OS RECENTES -->
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <h2>OS Mais Recentes</h2>
+        <a href="os.html" style="color:#2563eb;font-weight:600;">Ver Todas →</a>
+      </div>
+      <input type="text" id="buscaPlaca" placeholder=" Buscar por placa, cliente ou serviço...">
+      <div id="listaOS">
+        <div style="text-align:center;padding:60px;color:#64748b;">
+          Busque ou navegue pelas OS recentes...
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    © 2026 InfoCar — Desenvolvido por Talita Cordeiro | WhatsApp Suporte | IoT MQTT Integrado
+  </footer>
+
+  <script>
+    class DashboardPro {
+      constructor() {
+        this.DB_KEY = "infocar_os_v6";
+        this.dataOS = JSON.parse(localStorage.getItem(this.DB_KEY) || "{}");
+        this.chart = null;
+        this.init();
+      }
+
+      init() {
+        this.renderMetricas();
+        this.renderGrafico();
+        this.renderOSRecentes();
+        $("#buscaPlaca").addEventListener("input", () => this.buscarOS());
+      }
+
+      renderMetricas() {
+        const os = Object.values(this.dataOS);
+        const abertas = os.filter(item => item.status !== 'concluida').length;
+        
+        $("#osAbertas").textContent = abertas || 0;
+        $("#estoqueCritico").textContent = "5"; // placeholder
+        $("#faturamento").textContent = "R$15.420"; // placeholder
+        $("#clientesNovos").textContent = "8"; // placeholder
+      }
+
+      renderGrafico() {
+        const ctx = $("#graficoReparos").getContext('2d');
+        const servicos = ['Óleo', 'Freio', 'Motor', 'Suspensão', 'Elétrica'];
+        const valores = servicos.map(s => 
+          Object.values(this.dataOS).filter(os => os.servico?.toLowerCase().includes(s.toLowerCase())).length
+        );
+
+        if (this.chart) this.chart.destroy();
+        
+        this.chart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: servicos,
+            datasets: [{
+              data: valores,
+              backgroundColor: ['#2563eb', '#60a5fa', '#93c5fd', '#bae6fd', '#e0f2fe'],
+              borderWidth: 0,
+              borderRadius: 12
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                position: 'bottom',
+                labels: { 
+                  color: '#e4edff', 
+                  padding: 20, 
+                  usePointStyle: true,
+                  pointStyle: 'circle'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      renderOSRecentes() {
+        const recentes = Object.values(this.dataOS)
+          .sort((a,b) => new Date(b.data) - new Date(a.data))
+          .slice(0, 8);
+        
+        $("#listaOS").innerHTML = recentes.map(os => {
+          const statusClass = os.status === 'concluida' ? 'status-concluida' : 'status-aberta';
+          return `
+            <div class="os-item" onclick="window.location.href='os.html'">
+              <div class="os-header">${os.cliente || 'N/C'} • ${os.placa}</div>
+              <div class="os-detalhes">
+                <span>${os.marca} ${os.modelo} ${os.ano}</span>
+                <span>${os.servico}</span>
+                <span class="os-status ${statusClass}">${os.status || 'aberta'}</span>
+              </div>
+            </div>
+          `;
+        }).join('') || '<div style="text-align:center;padding:60px;color:#64748b;">Nenhuma OS cadastrada</div>';
+      }
+
+      buscarOS() {
+        const termo = $("#buscaPlaca").value.toLowerCase();
+        const todasOS = Object.values(this.dataOS);
+        const filtradas = todasOS.filter(os => 
+          os.cliente?.toLowerCase().includes(termo) ||
+          os.placa?.toLowerCase().includes(termo) ||
+          os.servico?.toLowerCase().includes(termo)
+        ).slice(0, 8);
+        
+        $("#listaOS").innerHTML = filtradas.map(os => {
+          const statusClass = os.status === 'concluida' ? 'status-concluida' : 'status-aberta';
+          return `
+            <div class="os-item" onclick="window.location.href='os.html'">
+              <div class="os-header">${os.cliente || 'N/C'} • ${os.placa}</div>
+              <div class="os-detalhes">
+                <span>${os.marca} ${os.modelo} ${os.ano}</span>
+                <span>${os.servico}</span>
+                <span class="os-status ${statusClass}">${os.status || 'aberta'}</span>
+              </div>
+            </div>
+          `;
+        }).join('') || '<div style="text-align:center;padding:60px;color:#64748b;">Nenhum resultado</div>';
+      }
+    }
+
+    const $ = s => document.querySelector(s);
+    window.addEventListener("DOMContentLoaded", () => new DashboardPro());
+  </script>
+</body>
+</html>
