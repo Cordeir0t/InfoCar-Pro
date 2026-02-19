@@ -1,417 +1,320 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>InfoCar OS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background: linear-gradient(135deg, #081862 0%, #00082a 100%);
-      min-height: 100vh; 
-      padding: 20px; 
-      color: #462eaf;
-    }
-    .topo { 
-      background: rgba(0,0,0,0.6); 
-      padding: 20px; 
-      border-radius: 15px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      margin-bottom: 20px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    .logo h1 { color: #2563eb; font-size: 2em; }
-    .logo span { color: #fff; font-weight: 500; }
-    nav a { color: #074abe; text-decoration: none; margin: 0 10px; font-weight: 500; }
-    nav a:hover { color: #2563eb; }
+<meta charset="UTF-8">
+<title>InfoCar - Ordem de Serviço</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .container { max-width: 1200px; margin: 0 auto; }
-    .card { background: rgba(7,7,7,0.63); border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 15px 35px rgba(1,39,255,0.329); }
-    h2 { color: #fff; margin-bottom: 25px; border-bottom: 3px solid #fff; padding-bottom: 10px; }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
 
-    label { display: block; font-weight: 600; color: #0061fe95; margin: 15px 0 5px; }
-    input, select, textarea { width: 100%; padding: 12px; border: 2px solid #00000015; border-radius: 8px; font-size: 16px; transition: all 0.3s; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
+body{
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#081862,#00082a);
+  color:#333;
+  padding:20px;
+}
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+header{
+  background:rgba(0,0,0,0.6);
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
+  color:white;
+}
 
-    #tarefasBox label { display: flex; align-items: center; margin: 8px 0; font-weight: normal; }
-    #tarefasBox input[type="checkbox"] { width: auto; margin-right: 10px; transform: scale(1.2); }
+header h1{
+  color:#3b82f6;
+}
 
-    .botoes { display: flex; gap: 15px; margin-top: 30px; }
-    button { padding: 14px 28px; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.3s; flex: 1; }
-    #salvar { background: linear-gradient(135deg,#10b981,#059669); color: #fff; }
-    #salvar:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(16,185,129,0.3); }
-    button.sec { background: #eeeeee; color: #6b7280; }
-    button.sec:hover { background: #e5e7eb; }
+nav{
+  margin-top:15px;
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+}
 
-    #lista { display: flex; flex-direction: column; gap: 15px; }
-    .os-card { background: #f8fafc; border-left: 5px solid #2563eb; padding: 20px; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
-    .os-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    .os-card.aberta { border-left-color: #f59e0b; }
-    .os-card.concluida { border-left-color: #10b981; }
+nav a{
+  text-decoration:none;
+  color:white;
+  background:#2563eb;
+  padding:8px 15px;
+  border-radius:8px;
+  font-size:14px;
+  transition:0.3s;
+}
 
-    .filtros { display: flex; gap: 15px; margin-bottom: 20px; }
-    .filtros input, .filtros select { flex: 1; max-width: 300px; }
+nav a:hover{
+  background:#1d4ed8;
+}
 
-    #totalOS { background: #4a68a7; color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
+.container{
+  max-width:1100px;
+  margin:auto;
+}
 
-    #voiceToggle { 
-      position: fixed; bottom: 20px; right: 20px; 
-      background: #2563eb; color: #fff; border: none; border-radius: 50%; 
-      width: 60px; height: 60px; font-size: 1.5em; cursor: pointer; display: flex; 
-      align-items: center; justify-content: center; 
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s; 
-    }
-    #voiceToggle.listening { background: #2ad89e; transform: scale(1.1); }
+.card{
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
 
-    /* Nova caixa para informações adicionais */
-    .extra-info { background: rgba(0, 0, 0, 0.347); padding: 20px; border-radius: 12px; margin-top: 20px; color: #000; }
-    .extra-info label { color: #2563eb; }
+h2{
+  margin-bottom:20px;
+}
 
-    @media (max-width:768px){ 
-      .grid-2,.grid-3{grid-template-columns:1fr;} 
-      .botoes{flex-direction:column;} 
-      body{padding:10px;} 
-    }
+label{
+  display:block;
+  margin:10px 0 5px;
+  font-weight:bold;
+}
 
-    /* autocomplete suggestion */
-    #modelo-list { background: white; border: 1px solid #ccc; border-radius:5px; position: absolute; max-height:120px; overflow-y:auto; display:none; z-index:1000; width:calc(100% - 24px); }
-    #modelo-list div { padding:8px; cursor:pointer; }
-    #modelo-list div:hover { background:#f0f0f0; }
-  </style>
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+textarea{
+  resize:vertical;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:15px;
+}
+
+.botoes{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+button{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:#2563eb;
+  color:white;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+button.sec{
+  background:#ccc;
+  color:#333;
+}
+
+.osCard{
+  background:#f1f5f9;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+
+.osHeader{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+#voiceToggle{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  font-size:1.5em;
+  background:#2563eb;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+#voiceToggle.listening{
+  background:#10b981;
+  transform:scale(1.1);
+}
+
+@media(max-width:768px){
+  .grid-2,.grid-3{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
+
 <body>
-  <header class="topo">
-    <div class="logo">
-      <h1>InfoCar</h1>
-      <span>Sistema OS</span>
-    </div>
-    <nav>
-      <a href="#">Dashboard</a> | <a href="#">Estoque</a> | <a href="#">Clientes</a> | <a href="#">Relatórios</a>
-    </nav>
-  </header>
 
-  <main class="container">
-    <form id="formOS">
-      <section class="card">
-        <h2>Nova Ordem de Serviço</h2>
+<header>
+  <h1>InfoCar - Sistema Oficina</h1>
 
-        <!-- Responsável e Cliente -->
-        <div class="grid-2">
-          <div>
-            <label>Responsável *</label>
-            <input name="responsavel" id="nome" placeholder="João Silva - Mecânico" required>
-          </div>
-          <div>
-            <label>Cliente *</label>
-            <input name="cliente" id="cliente" placeholder="José da Silva" required>
-          </div>
-        </div>
+  <nav>
+    <a href="os.html">Ordens de Serviço</a>
+    <a href="estoque.html">Gestão Estoque</a>
+    <a href="clientes.html">Clientes</a>
+    <a href="relatorios.html">Relatórios</a>
+  </nav>
+</header>
 
-        <!-- Marca e Modelo -->
-        <div class="grid-2" style="position:relative;">
-          <div>
-            <label>Marca *</label>
-            <select id="marca" name="marca" required>
-              <option value="">Selecione Marca</option>
-            </select>
-          </div>
-          <div>
-            <label>Modelo *</label>
-            <input type="text" id="modelo" name="modelo" placeholder="Digite o modelo" autocomplete="off" required>
-            <div id="modelo-list"></div>
-          </div>
-        </div>
+<main class="container">
 
-        <!-- País, Ano e Tipo -->
-        <div class="grid-3">
-          <div>
-            <label>País *</label>
-            <select id="pais" name="pais" required>
-              <option value="">🇧🇷 Selecione País</option>
-              <option value="Brasil">🇧🇷 Brasil</option>
-              <option value="Alemanha">🇩🇪 Alemanha</option>
-              <option value="Japao">🇯🇵 Japão</option>
-              <option value="Eua">🇺🇸 EUA</option>
-              <option value="Coreia">🇰🇷 Coreia</option>
-            </select>
-          </div>
-          <div>
-            <label>Ano *</label>
-            <input name="ano" id="ano" type="number" min="1950" max="2026" placeholder="2023" required>
-          </div>
-          <div>
-            <label>Tipo Veículo</label>
-            <select name="tipoCarro" id="tipoCarro">
-              <option value="">Selecione tipo</option>
-              <option value="hatch">Hatch</option>
-              <option value="sedan">Sedan</option>
-              <option value="suv">SUV/Crossover</option>
-              <option value="pickup">Pickup</option>
-              <option value="van">Van/Minivan</option>
-              <option value="esportivo">Esportivo</option>
-              <option value="moto">Moto</option>
-            </select>
-          </div>
-        </div>
+<form id="formOS">
+<section class="card">
+<h2>Nova Ordem de Serviço</h2>
 
-        <!-- Serviço -->
-        <div class="grid-2">
-          <div>
-            <label>Serviço Principal *</label>
-            <select id="tipoServico" name="servico" required>
-              <option value="">Selecione Serviço</option>
-              <option value="oleo">Troca de Óleo</option>
-              <option value="freio">Sistema de Freio</option>
-              <option value="motor">Motor/Gasolina</option>
-              <option value="suspensao">Suspensão/Direção</option>
-              <option value="eletrica">Elétrica/Eletrônica</option>
-            </select>
-          </div>
-        </div>
+<div class="grid-2">
+  <div>
+    <label>Código da OS *</label>
+    <input id="codigoOS" required placeholder="OS-001">
+  </div>
+  <div>
+    <label>Status</label>
+    <select id="statusOS">
+      <option>Aberta</option>
+      <option>Em andamento</option>
+      <option>Finalizada</option>
+      <option>Entregue</option>
+    </select>
+  </div>
+</div>
 
-        <!-- Tarefas Dinâmicas -->
-        <div id="tarefasBox" style="margin:20px 0;"></div>
-        <div id="campos-dinamicos"></div>
+<div class="grid-2">
+  <div>
+    <label>Responsável *</label>
+    <input id="nome" required>
+  </div>
+  <div>
+    <label>Cliente *</label>
+    <input id="cliente" required>
+  </div>
+</div>
 
-        <!-- Informações Adicionais -->
-        <div class="extra-info">
-          <label>Peças Utilizadas (código/preço)</label>
-          <textarea name="pecas" id="pecas" rows="2" placeholder="Ex: Filtro óleo MH725/2 - R$45,00"></textarea>
+<div class="grid-2">
+  <div>
+    <label>País *</label>
+    <select id="pais" required>
+      <option value="">Selecione</option>
+      <option>Brasil</option>
+      <option>Alemanha</option>
+      <option>Japão</option>
+      <option>EUA</option>
+      <option>França</option>
+      <option>Itália</option>
+      <option>Coreia</option>
+      <option>China</option>
+      <option>Reino Unido</option>
+      <option>Suécia</option>
+      <option>Índia</option>
+      <option>Espanha</option>
+    </select>
+  </div>
 
-          <label>NF/Compra/Fornecedor</label>
-          <input name="codigoCompra" id="codigoCompra" placeholder="NF 1234 - AutoPeças XYZ">
+  <div>
+    <label>Marca *</label>
+    <select id="marca" required></select>
+  </div>
+</div>
 
-          <label>Observações Técnicas</label>
-          <textarea name="observacoes" id="observacoes" rows="2"></textarea>
+<div class="grid-2">
+  <div>
+    <label>Modelo *</label>
+    <input id="modelo" required>
+  </div>
+  <div>
+    <label>Ano *</label>
+    <input type="number" id="ano" required>
+  </div>
+</div>
 
-          <label>Processo Realizado</label>
-          <textarea name="descricaoProcesso" id="descricaoProcesso" rows="2" placeholder="Descreva o serviço executado..."></textarea>
-        </div>
+<div class="grid-2">
+  <div>
+    <label>Placa *</label>
+    <input id="placa" required>
+  </div>
+  <div>
+    <label>Quilometragem *</label>
+    <input type="number" id="km" required>
+  </div>
+</div>
 
-        <div class="botoes">
-          <button type="submit" id="salvar">Salvar OS Completa</button>
-          <button type="button" class="sec" id="limparForm">Limpar Formulário</button>
-        </div>
-      </section>
-    </form>
+<div>
+  <label>Tipo de Serviço *</label>
+  <select id="tipoServico" required>
+    <option value="">Selecione</option>
+    <option value="oleo">Troca de Óleo</option>
+    <option value="freio">Freio</option>
+    <option value="motor">Motor</option>
+    <option value="suspensao">Suspensão</option>
+    <option value="eletrica">Elétrica</option>
+    <option value="ar">Ar Condicionado</option>
+    <option value="revisao">Revisão Completa</option>
+  </select>
+</div>
 
-    <!-- OS Recentes -->
-    <section class="card">
-      <h2>OS Recentes <span id="totalOS">0</span></h2>
-      <div class="filtros">
-        <input id="buscaOS" placeholder="Buscar por cliente, placa ou serviço...">
-        <select id="filtroStatus">
-          <option value="">Todos</option>
-          <option value="aberta">Abertas</option>
-          <option value="concluida">Concluídas</option>
-        </select>
-      </div>
-      <div id="lista"></div>
-    </section>
-  </main>
+<div id="tarefasBox"></div>
 
-  <button id="voiceToggle">🎤</button>
+<label>Descrição do Serviço</label>
+<textarea id="descricao" rows="4"></textarea>
 
-  <script>
-    const $ = s => document.querySelector(s);
+<label>Observações Importantes</label>
+<textarea id="observacoes" rows="3"></textarea>
 
-    class InfocarPro {
-      constructor(){
-        this.DB_KEY = "infocar_os_v8";
-        this.initElements();
-        this.initData();
-        this.bindEvents();
-        this.load();
-        this.updateMarcas();
-        this.render();
-      }
+<label>Laudo Técnico</label>
+<textarea id="laudo" rows="3"></textarea>
 
-      initElements(){
-        this.UI = {
-          form: $("#formOS"),
-          lista: $("#lista"),
-          pais: $("#pais"),
-          marca: $("#marca"),
-          modelo: $("#modelo"),
-          modeloList: $("#modelo-list"),
-          servico: $("#tipoServico"),
-          tarefas: $("#tarefasBox"),
-          campos: $("#campos-dinamicos"),
-          busca: $("#buscaOS"),
-          status: $("#filtroStatus"),
-          total: $("#totalOS")
-        };
-      }
+<div class="grid-3">
+  <div>
+    <label>Mão de Obra (R$)</label>
+    <input type="number" id="maoObra" step="0.01">
+  </div>
+  <div>
+    <label>Valor Peças (R$)</label>
+    <input type="number" id="valorPecas" step="0.01">
+  </div>
+  <div>
+    <label>Total (R$)</label>
+    <input type="number" id="total" readonly>
+  </div>
+</div>
 
-      initData(){
-        this.BASE = {
-          Brasil: { Fiat:["Uno","Palio","Mobi"], Volkswagen:["Gol","Voyage"] },
-          Alemanha: { BMW:["320i","330i"], Audi:["A3","A4"] },
-          Japao: { Nissan:["Versa","Sentra"] },
-          Eua: { Ford:["Mustang","F-150"] },
-          Coreia: { Kia:["Sportage","Seltos"] }
-        };
-        this.SERVICOS = {
-          oleo:{ tarefas:["Troca óleo motor","Filtro óleo"], campos:["oleo"] },
-          freio:{ tarefas:["Pastilhas dianteiras","Discos traseiros"], campos:["freio"] },
-          motor:{ tarefas:["Velas ignição","Bomba água"], campos:["motor"] },
-          suspensao:{ tarefas:["Amortecedores Dianteiros"], campos:["susp"] },
-          eletrica:{ tarefas:["Bateria nova"], campos:[] }
-        };
-        this.OLEOS = ["5W20","5W30","10W40"];
-        this.FREIO_FLUIDO = ["DOT3","DOT4"];
-        this.MOTOR_TIPO = ["1.0 3 Cil","1.6 MSI"];
-      }
+<div class="botoes">
+  <button type="submit">Salvar OS</button>
+  <button type="button" id="limparForm" class="sec">Limpar</button>
+</div>
 
-      bindEvents(){
-        this.UI.pais.addEventListener("change", ()=>{ this.updateMarcas(); });
-        this.UI.marca.addEventListener("change", ()=>{ this.updateModelos(); });
-        this.UI.modelo.addEventListener("input", ()=>{ this.autocompleteModelo(); });
-        this.UI.servico.addEventListener("change", ()=>{ this.updateServico(); });
-        this.UI.form.addEventListener("submit", e=>this.save(e));
-        this.UI.busca.addEventListener("input", ()=>this.render());
-        this.UI.status.addEventListener("change", ()=>this.render());
-        $("#limparForm").addEventListener("click", ()=>{
-          this.UI.form.reset(); this.updateServico(); this.updateModelos(); this.UI.modeloList.style.display="none";
-        });
-      }
+</section>
+</form>
 
-      updateMarcas(){
-        const pais = this.UI.pais.value;
-        const marcas = Object.keys(this.BASE[pais]||{});
-        this.UI.marca.innerHTML = `<option value="">Selecione Marca</option>`+marcas.map(m=>`<option value="${m}">${m}</option>`).join("");
-        this.updateModelos();
-      }
+<section class="card">
+  <h2>OS Recentes</h2>
+  <div id="lista"></div>
+</section>
 
-      updateModelos(){
-        const pais = this.UI.pais.value;
-        const marca = this.UI.marca.value;
-        const modelos = this.BASE[pais]?.[marca]||[];
-        this.UI.modelo.placeholder = modelos.length? `Ex: ${modelos.join(", ")}` : "Digite o modelo";
-      }
+</main>
 
-      autocompleteModelo(){
-        const val = this.UI.modelo.value.toLowerCase();
-        const pais = this.UI.pais.value;
-        const marca = this.UI.marca.value;
-        const modelos = this.BASE[pais]?.[marca]||[];
-        if(!val){ this.UI.modeloList.style.display="none"; return; }
-        const matches = modelos.filter(m=>m.toLowerCase().includes(val));
-        if(matches.length){
-          this.UI.modeloList.innerHTML = matches.map(m=>`<div>${m}</div>`).join("");
-          this.UI.modeloList.style.display="block";
-          this.UI.modeloList.querySelectorAll("div").forEach(div=>{
-            div.addEventListener("click", ()=>{
-              this.UI.modelo.value = div.textContent;
-              this.UI.modeloList.style.display="none";
-            });
-          });
-        } else this.UI.modeloList.style.display="none";
-      }
+<div id="voiceToggle">🎤</div>
 
-      updateServico(){
-        const s = this.SERVICOS[this.UI.servico.value];
-        this.UI.tarefas.innerHTML = s? s.tarefas.map(t=>`<label><input type="checkbox" name="tarefas" value="${t}"> ${t}</label>`).join("") : "";
-        let camposHTML = "";
-        if(s?.campos.includes("oleo")) camposHTML += this.selectHTML("Tipo Óleo","oleo",this.OLEOS);
-        if(s?.campos.includes("freio")) camposHTML += this.selectHTML("Fluido Freio","fluido",this.FREIO_FLUIDO);
-        if(s?.campos.includes("motor")) camposHTML += this.selectHTML("Tipo Motor","motor",this.MOTOR_TIPO);
-        this.UI.campos.innerHTML = camposHTML;
-      }
+<script src="app.js"></script>
 
-      selectHTML(label,name,list){
-        return `<div style="margin:20px 0;padding:20px;background:#f8fafc;border-radius:10px;">
-          <label style="font-size:1.1em;margin-bottom:10px;display:block;">${label}</label>
-          <select name="${name}"><option value="">Selecione</option>${list.map(x=>`<option value="${x}">${x}</option>`).join("")}</select>
-        </div>`;
-      }
-
-      save(e){
-        e.preventDefault();
-        const data = {
-          responsavel:this.UI.form.nome.value,
-          cliente:this.UI.form.cliente.value,
-          pais:this.UI.form.pais.value,
-          marca:this.UI.form.marca.value,
-          modelo:this.UI.form.modelo.value,
-          ano:this.UI.form.ano.value,
-          tipoCarro:this.UI.form.tipoCarro.value,
-          servico:this.UI.form.servico.value,
-          tarefas:[...this.UI.form.querySelectorAll("input[name='tarefas']:checked")].map(x=>x.value),
-          oleo:this.UI.form.oleo?.value||"",
-          fluido:this.UI.form.fluido?.value||"",
-          motor:this.UI.form.motor?.value||"",
-          pecas:this.UI.form.pecas.value,
-          codigoCompra:this.UI.form.codigoCompra.value,
-          observacoes:this.UI.form.observacoes.value,
-          descricaoProcesso:this.UI.form.descricaoProcesso.value,
-          status:"aberta",
-          timestamp:Date.now()
-        };
-        const db = JSON.parse(localStorage.getItem(this.DB_KEY)||"[]");
-        db.unshift(data);
-        localStorage.setItem(this.DB_KEY,JSON.stringify(db));
-        this.UI.form.reset();
-        this.updateServico();
-        this.render();
-      }
-
-      load(){ this.data = JSON.parse(localStorage.getItem(this.DB_KEY)||"[]"); }
-
-      render(){
-        this.load();
-        const busca = this.UI.busca.value.toLowerCase();
-        const status = this.UI.status.value;
-        const lista = this.data.filter(os=>{
-          return (!status||os.status===status) &&
-                 (!busca||[os.cliente,os.marca,os.modelo,os.servico].some(f=>f.toLowerCase().includes(busca)));
-        });
-        this.UI.total.textContent = lista.length;
-        this.UI.lista.innerHTML = lista.map(os=>`
-          <div class="os-card ${os.status}">
-            <strong>${os.cliente}</strong> - ${os.marca} ${os.modelo} (${os.ano})<br>
-            Serviço: ${os.servico} | Status: ${os.status}<br>
-            Tarefas: ${os.tarefas.join(", ")}<br>
-            ${os.pecas? `Peças: ${os.pecas}<br>` : ""}
-            ${os.codigoCompra? `NF/Fornecedor: ${os.codigoCompra}<br>` : ""}
-            ${os.observacoes? `Obs: ${os.observacoes}<br>` : ""}
-          </div>
-        `).join("");
-      }
-    }
-
-    const app = new InfocarPro();
-
-    // Reconhecimento de voz (básico)
-    const voiceBtn = $("#voiceToggle");
-    if(window.SpeechRecognition || window.webkitSpeechRecognition){
-      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const rec = new Recognition();
-      rec.lang = "pt-BR";
-      rec.continuous = false;
-      rec.interimResults = false;
-      voiceBtn.addEventListener("click", ()=>{
-        rec.start();
-        voiceBtn.classList.add("listening");
-      });
-      rec.onresult = e=>{
-        const txt = e.results[0][0].transcript.toLowerCase();
-        if(txt.includes("brasil")) app.UI.pais.value="Brasil";
-        if(txt.includes("alemanha")) app.UI.pais.value="Alemanha";
-        if(txt.includes("japão")||txt.includes("japao")) app.UI.pais.value="Japao";
-        if(txt.includes("eua")) app.UI.pais.value="Eua";
-        if(txt.includes("coreia")) app.UI.pais.value="Coreia";
-        app.updateMarcas();
-        voiceBtn.classList.remove("listening");
-      }
-      rec.onerror = ()=> voiceBtn.classList.remove("listening");
-    }
-  </script>
 </body>
 </html>

@@ -1,17 +1,78 @@
 class InfocarPro {
+
   constructor() {
-    this.DB_KEY = "infocar_os_v5";
-    this.initElements();
+    this.DB_KEY = "infocar_os_v8";
+
     this.initData();
+    this.initElements();
     this.bindEvents();
+    this.initVoice(); // 🎤 ATIVADO AQUI
     this.load();
-    this.updateMarcas();   // garante selects populados
-    this.updateModelos();  // garante modelos coerentes
-    this.updateServico();  // garante tarefas/campos coerentes
+
+    this.updatePaises();
+    this.updateMarcas();
+    this.updateModelos();
+    this.updateServico();
     this.render();
   }
 
-  /* ================= UI ================= */
+  /* ==========================
+     BASE COMPLETA EXPANDIDA
+  ========================== */
+
+  initData() {
+
+    this.BASE = {
+
+      Brasil: {
+        Fiat: ["Uno", "Palio", "Mobi", "Argo", "Cronos", "Toro", "Strada", "Fastback"],
+        Volkswagen: ["Gol", "Voyage", "Polo", "Virtus", "T-Cross", "Nivus", "Jetta", "Amarok"],
+        Chevrolet: ["Onix", "Prisma", "Cruze", "Tracker", "S10", "Spin", "Montana"],
+        Ford: ["Ka", "Fiesta", "Focus", "Ranger", "EcoSport"],
+        Toyota: ["Corolla", "Yaris", "Hilux", "SW4"],
+        Honda: ["Civic", "City", "Fit", "HR-V", "WR-V"],
+        Hyundai: ["HB20", "Creta", "Tucson", "Santa Fe"],
+        Renault: ["Kwid", "Sandero", "Logan", "Duster", "Oroch"],
+        Jeep: ["Renegade", "Compass", "Commander", "Gladiator"]
+      },
+
+      Alemanha: {
+        BMW: ["320i", "330i", "X1", "X3", "X5", "M3", "M4"],
+        Mercedes: ["C180", "C200", "GLA", "GLC", "E300", "A200"],
+        Audi: ["A3", "A4", "A6", "Q3", "Q5", "Q7"],
+        Porsche: ["911", "Cayenne", "Macan", "Panamera"],
+        Volkswagen: ["Golf", "Passat", "Tiguan"]
+      },
+
+      EUA: {
+        Tesla: ["Model 3", "Model S", "Model X", "Model Y"],
+        Dodge: ["Challenger", "Charger", "RAM 1500"],
+        Chevrolet: ["Camaro", "Silverado"],
+        Ford: ["Mustang", "F-150"]
+      },
+
+      Japao: {
+        Nissan: ["Versa", "Sentra", "Kicks", "Frontier", "GT-R"],
+        Mitsubishi: ["Lancer", "ASX", "Outlander", "Pajero"],
+        Subaru: ["Impreza", "Forester", "WRX"],
+        Toyota: ["Supra", "Corolla", "Camry"],
+        Honda: ["Accord", "Civic Type R"]
+      }
+    };
+
+    this.SERVICOS = {
+      oleo: { tarefas: ["Troca óleo", "Troca filtro óleo"], campos: ["oleo"] },
+      freio: { tarefas: ["Pastilhas", "Discos", "Fluido"], campos: [] },
+      motor: { tarefas: ["Velas", "Bobinas", "Correia dentada"], campos: [] }
+    };
+
+    this.OLEOS = ["0W20", "5W30", "5W40", "10W40"];
+  }
+
+  /* ==========================
+     UI
+  ========================== */
+
   initElements() {
     this.UI = {
       form: $("#formOS"),
@@ -22,54 +83,15 @@ class InfocarPro {
       servico: $("#tipoServico"),
       tarefas: $("#tarefasBox"),
       campos: $("#campos-dinamicos"),
-      busca: $("#buscaOS"),
-      status: $("#filtroStatus")
+      busca: $("#buscaOS")
     };
   }
 
-  /* ================= BASE DADOS ================= */
-  initData() {
-    this.BASE = {
-      Brasil: {
-        Fiat: ["Uno", "Palio", "Mobi", "Argo", "Cronos", "Toro", "Strada"],
-        Volkswagen: ["Gol", "Voyage", "Polo", "Virtus", "T-Cross", "Nivus", "Jetta"],
-        Chevrolet: ["Onix", "Prisma", "Cruze", "Tracker", "S10"],
-        Ford: ["Ka", "Fiesta", "Focus", "Ranger"],
-        Toyota: ["Corolla", "Yaris", "Hilux"],
-        Honda: ["Civic", "City", "Fit", "HR-V"],
-        Hyundai: ["HB20", "Creta", "Tucson"],
-        Renault: ["Kwid", "Sandero", "Logan", "Duster"],
-        Jeep: ["Renegade", "Compass", "Commander"]
-      },
-      Alemanha: {
-        BMW: ["320i", "X1", "X3", "X5"],
-        Mercedes: ["C180", "GLA", "GLC"],
-        Audi: ["A3", "A4", "Q3", "Q5"],
-        Porsche: ["911", "Cayenne", "Macan"]
-      },
-      Japao: {
-        Nissan: ["Versa", "Sentra", "Kicks"],
-        Mitsubishi: ["Lancer", "ASX", "Outlander"],
-        Subaru: ["Impreza", "Forester"]
-      }
-    };
+  /* ==========================
+     EVENTOS
+  ========================== */
 
-    this.SERVICOS = {
-      oleo: { tarefas: ["Troca óleo", "Troca filtro", "Limpeza cárter"], campos: ["oleo"] },
-      freio: { tarefas: ["Pastilhas", "Discos", "Fluido", "Sangria"], campos: ["freio"] },
-      motor: { tarefas: ["Velas", "Bobinas", "Correia", "Bicos"], campos: ["motor"] },
-      suspensao: { tarefas: ["Amortecedor", "Bucha", "Bieleta", "Mola"], campos: ["susp"] },
-      eletrica: { tarefas: ["Bateria", "Alternador", "Motor partida", "Fiação"], campos: [] }
-    };
-
-    this.OLEOS = ["5W30", "5W40", "10W40", "0W20", "Sintético", "Semi"];
-    this.FREIO_FLUIDO = ["DOT3", "DOT4", "DOT5"];
-    this.MOTOR_TIPO = ["1.0", "1.4", "1.6", "2.0", "Turbo", "Diesel"];
-  }
-
-  /* ================= EVENTS ================= */
   bindEvents() {
-    // optional chaining evita crash quando algum ID não existe na página [web:11]
     this.UI.pais?.addEventListener("change", () => {
       this.updateMarcas();
       this.updateModelos();
@@ -80,148 +102,170 @@ class InfocarPro {
 
     this.UI.form?.addEventListener("submit", (e) => this.save(e));
     this.UI.busca?.addEventListener("input", () => this.render());
-    this.UI.status?.addEventListener("change", () => this.render());
+
+    document.querySelector("#btnVoz")?.addEventListener("click", () => {
+      this.recognition?.start();
+    });
   }
 
-  /* ================= SELECTS ================= */
+  /* ==========================
+     PAÍS → MARCA → MODELO
+  ========================== */
+
+  updatePaises() {
+    const paises = Object.keys(this.BASE);
+    if (!this.UI.pais) return;
+
+    this.UI.pais.innerHTML =
+      `<option value="">Selecione país</option>` +
+      paises.map(p => `<option value="${p}">${p}</option>`).join("");
+  }
+
   updateMarcas() {
     const pais = this.UI.pais?.value;
     const marcas = Object.keys(this.BASE[pais] || {});
-
     if (!this.UI.marca) return;
 
     this.UI.marca.innerHTML =
       `<option value="">Selecione marca</option>` +
-      marcas.map((m) => `<option value="${m}">${m}</option>`).join("");
+      marcas.map(m => `<option value="${m}">${m}</option>`).join("");
 
-    // reseta modelo quando troca país
-    if (this.UI.modelo) {
-      this.UI.modelo.innerHTML = `<option value="">Selecione modelo</option>`;
-    }
+    this.updateModelos();
   }
 
   updateModelos() {
     const pais = this.UI.pais?.value;
     const marca = this.UI.marca?.value;
     const modelos = this.BASE[pais]?.[marca] || [];
-
     if (!this.UI.modelo) return;
 
     this.UI.modelo.innerHTML =
       `<option value="">Selecione modelo</option>` +
-      modelos.map((m) => `<option value="${m}">${m}</option>`).join("");
+      modelos.map(m => `<option value="${m}">${m}</option>`).join("");
   }
 
-  /* ================= SERVIÇOS ================= */
+  /* ==========================
+     VOZ INTELIGENTE
+  ========================== */
+
+  initVoice() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = "pt-BR";
+
+    this.recognition.onresult = (event) => {
+      const texto = event.results[0][0].transcript.toLowerCase();
+      console.log("🎤 Ouvido:", texto);
+      this.processarComando(texto);
+    };
+  }
+
+  processarComando(texto) {
+
+    const campoCliente = document.querySelector("input[name='cliente']");
+    const nomeMatch = texto.match(/cliente\s([a-z\s]+)/);
+    if (nomeMatch && campoCliente) {
+      campoCliente.value = nomeMatch[1];
+    }
+
+    Object.keys(this.BASE).forEach(pais => {
+      if (texto.includes(pais.toLowerCase())) {
+        this.UI.pais.value = pais;
+        this.updateMarcas();
+      }
+    });
+
+    const paisAtual = this.UI.pais.value;
+    const marcas = this.BASE[paisAtual] || {};
+
+    Object.keys(marcas).forEach(marca => {
+      if (texto.includes(marca.toLowerCase())) {
+        this.UI.marca.value = marca;
+        this.updateModelos();
+      }
+    });
+
+    const modelos = Object.values(marcas).flat();
+    modelos.forEach(modelo => {
+      if (texto.includes(modelo.toLowerCase())) {
+        this.UI.modelo.value = modelo;
+      }
+    });
+
+    if (texto.includes("óleo")) {
+      this.UI.servico.value = "oleo";
+      this.updateServico();
+    }
+  }
+
+  /* ==========================
+     SERVIÇOS
+  ========================== */
+
   updateServico() {
     const servico = this.UI.servico?.value;
     const s = this.SERVICOS[servico];
 
-    if (this.UI.tarefas) this.UI.tarefas.innerHTML = "";
-    if (this.UI.campos) this.UI.campos.innerHTML = "";
+    this.UI.tarefas.innerHTML = "";
+    this.UI.campos.innerHTML = "";
+
     if (!s) return;
 
-    if (this.UI.tarefas) {
-      this.UI.tarefas.innerHTML = s.tarefas
-        .map(
-          (t) =>
-            `<label><input type="checkbox" name="tarefas" value="${t}"> ${t}</label>`
-        )
-        .join("<br>");
+    this.UI.tarefas.innerHTML = s.tarefas
+      .map(t => `<label><input type="checkbox" name="tarefas" value="${t}"> ${t}</label>`)
+      .join("<br>");
+
+    if (s.campos.includes("oleo")) {
+      this.UI.campos.innerHTML =
+        `<select name="oleo">
+          <option value="">Selecione óleo</option>
+          ${this.OLEOS.map(o => `<option value="${o}">${o}</option>`).join("")}
+        </select>`;
     }
-
-    let camposHTML = "";
-    if (s.campos.includes("oleo")) camposHTML += this.selectHTML("Óleo", "oleo", this.OLEOS);
-    if (s.campos.includes("freio")) camposHTML += this.selectHTML("Fluido", "fluido", this.FREIO_FLUIDO);
-    if (s.campos.includes("motor")) camposHTML += this.selectHTML("Motor", "motor", this.MOTOR_TIPO);
-
-    if (this.UI.campos) this.UI.campos.innerHTML = camposHTML;
   }
 
-  selectHTML(label, name, list) {
-    return `
-      <div style="margin: 10px 0;">
-        <label>${label}: </label>
-        <select name="${name}">
-          <option value="">Selecione</option>
-          ${list.map((x) => `<option value="${x}">${x}</option>`).join("")}
-        </select>
-      </div>`;
-  }
+  /* ==========================
+     CRUD
+  ========================== */
 
-  /* ================= CRUD ================= */
   save(e) {
-    e?.preventDefault();
-    if (!this.UI.form) return;
-
+    e.preventDefault();
     const fd = new FormData(this.UI.form);
-
-    // Monta objeto sem perder campos repetidos (checkboxes) [web:6]
     const d = Object.fromEntries(fd.entries());
-    d.tarefas = fd.getAll("tarefas"); // pega todas marcadas [web:6]
-
-    d.id = d.id || this.uid();
-    d.data = this.now();
+    d.tarefas = fd.getAll("tarefas");
+    d.id = Date.now();
+    d.data = new Date().toLocaleString("pt-BR");
 
     this.data ||= {};
     this.data[d.id] = d;
-    this.persist();
+
+    localStorage.setItem(this.DB_KEY, JSON.stringify(this.data));
 
     this.UI.form.reset();
-    this.updateServico(); // limpa tarefas/campos visuais pós-reset
     this.render();
-    this.toast("OS salva com sucesso!");
   }
 
   load() {
     this.data = JSON.parse(localStorage.getItem(this.DB_KEY) || "{}");
   }
 
-  persist() {
-    localStorage.setItem(this.DB_KEY, JSON.stringify(this.data));
-  }
-
-  /* ================= RENDER ================= */
   render() {
-    let arr = Object.values(this.data || {});
-    const q = this.UI.busca?.value?.toLowerCase() || "";
-
-    if (q) {
-      arr = arr.filter((x) => JSON.stringify(x).toLowerCase().includes(q));
-    }
-
-    // Se você quiser filtrar por status, implemente aqui usando this.UI.status.value
-
+    const arr = Object.values(this.data || {});
     if (!this.UI.lista) return;
 
-    this.UI.lista.innerHTML = arr
-      .map(
-        (os) => `
-        <div class="card" style="border:1px solid #ccc; padding:15px; margin:10px 0; border-radius:5px;">
-          <b>${os.cliente || "Sem nome"}</b><br>
-          <div>${os.marca || ""} ${os.modelo || ""}</div>
-          <div>Serviço: ${os.servico || ""}</div>
-          <div>Tarefas: ${(os.tarefas || []).join(", ") || "Nenhuma"}</div>
-          <div><small>${os.data || ""}</small></div>
-        </div>
-      `
-      )
-      .join("");
-  }
-
-  /* ================= UTILS ================= */
-  uid() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2);
-  }
-  now() {
-    return new Date().toLocaleString("pt-BR");
-  }
-  toast(t) {
-    alert(t);
+    this.UI.lista.innerHTML = arr.map(os => `
+      <div class="card">
+        <b>${os.cliente || "Sem nome"}</b><br>
+        ${os.pais || ""} ${os.marca || ""} ${os.modelo || ""}<br>
+        Serviço: ${os.servico || ""}<br>
+        <small>${os.data}</small>
+      </div>
+    `).join("");
   }
 }
 
-/* ================= START ================= */
 const $ = (s) => document.querySelector(s);
 
 window.addEventListener("DOMContentLoaded", () => {
