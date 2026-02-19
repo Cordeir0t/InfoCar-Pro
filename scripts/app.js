@@ -2,8 +2,11 @@ const $ = (el) => document.querySelector(el);
 
 class InfoCarOS {
 
-  constructor(){
+  constructor() {
 
+    // ===============================
+    // 🌍 MARCAS POR PAÍS
+    // ===============================
     this.marcas = {
       Brasil:["Fiat","Chevrolet","Volkswagen","Ford","Toyota","Honda","Hyundai"],
       Alemanha:["BMW","Audi","Mercedes-Benz","Volkswagen","Porsche","Opel"],
@@ -19,6 +22,9 @@ class InfoCarOS {
       Espanha:["SEAT","Cupra"]
     };
 
+    // ===============================
+    // 🔧 SERVIÇOS
+    // ===============================
     this.SERVICOS = {
       oleo:["Troca de óleo","Filtro de óleo","Filtro de ar","Filtro de cabine"],
       freio:["Pastilhas","Discos","Fluido","Regulagem"],
@@ -32,39 +38,61 @@ class InfoCarOS {
     this.init();
   }
 
-  init(){
-    $("#pais").addEventListener("change", ()=> this.carregarMarcas());
-    $("#tipoServico").addEventListener("change", ()=> this.montarTarefas());
-    $("#formOS").addEventListener("submit", (e)=> this.salvar(e));
-    $("#limparForm").addEventListener("click", ()=> this.limpar());
+  // ===============================
+  // 🚀 INICIALIZAÇÃO
+  // ===============================
+  init() {
+    $("#pais").addEventListener("change", () => this.carregarMarcas());
+    $("#tipoServico").addEventListener("change", () => this.montarTarefas());
+    $("#formOS").addEventListener("submit", (e) => this.salvar(e));
+    $("#limparForm").addEventListener("click", () => this.limpar());
 
-    $("#maoObra").addEventListener("input", this.calcularTotal);
-    $("#valorPecas").addEventListener("input", this.calcularTotal);
+    $("#maoObra").addEventListener("input", () => this.calcularTotal());
+    $("#valorPecas").addEventListener("input", () => this.calcularTotal());
 
+    this.gerarAnos();
     this.initVoice();
     this.carregarLista();
   }
 
-  carregarMarcas(){
+  // ===============================
+  // 📅 GERAR ANOS 1950-2026
+  // ===============================
+  gerarAnos() {
+    const anoSelect = $("#ano");
+    anoSelect.innerHTML = "<option value=''>Selecione</option>";
+
+    for (let ano = 2026; ano >= 1950; ano--) {
+      anoSelect.innerHTML += `<option value="${ano}">${ano}</option>`;
+    }
+  }
+
+  // ===============================
+  // 🚗 CARREGAR MARCAS
+  // ===============================
+  carregarMarcas() {
     const pais = $("#pais").value;
     const select = $("#marca");
     select.innerHTML = "<option value=''>Selecione</option>";
 
-    if(this.marcas[pais]){
-      this.marcas[pais].forEach(m=>{
-        select.innerHTML += `<option>${m}</option>`;
+    if (this.marcas[pais]) {
+      this.marcas[pais].forEach(m => {
+        select.innerHTML += `<option value="${m}">${m}</option>`;
       });
     }
   }
 
-  montarTarefas(){
+  // ===============================
+  // 🔧 MONTAR TAREFAS
+  // ===============================
+  montarTarefas() {
     const tipo = $("#tipoServico").value;
     const box = $("#tarefasBox");
     box.innerHTML = "";
 
-    if(!this.SERVICOS[tipo]) return;
+    if (!this.SERVICOS[tipo]) return;
 
-    this.SERVICOS[tipo].forEach(t=>{
+    this.SERVICOS[tipo].forEach(t => {
       box.innerHTML += `
         <label>
           <input type="checkbox" value="${t}"> ${t}
@@ -73,23 +101,28 @@ class InfoCarOS {
     });
   }
 
-  calcularTotal(){
+  // ===============================
+  // 💰 CALCULAR TOTAL
+  // ===============================
+  calcularTotal() {
     const mao = parseFloat($("#maoObra").value) || 0;
     const pecas = parseFloat($("#valorPecas").value) || 0;
     $("#total").value = (mao + pecas).toFixed(2);
   }
 
-  salvar(e){
+  // ===============================
+  // 💾 SALVAR OS
+  // ===============================
+  salvar(e) {
     e.preventDefault();
 
     const tarefas = [...document.querySelectorAll("#tarefasBox input:checked")]
-      .map(c=>c.value);
+      .map(c => c.value);
 
     const lista = JSON.parse(localStorage.getItem("osList")) || [];
 
     let codigo = $("#codigoOS").value.trim();
-
-    if(!codigo){
+    if (!codigo) {
       codigo = "OS-" + (lista.length + 1).toString().padStart(3,"0");
     }
 
@@ -119,17 +152,19 @@ class InfoCarOS {
     localStorage.setItem("osList", JSON.stringify(lista));
 
     alert("OS " + codigo + " criada com sucesso!");
-
     this.limpar();
     this.carregarLista();
   }
 
-  carregarLista(){
+  // ===============================
+  // 📋 LISTA
+  // ===============================
+  carregarLista() {
     const lista = JSON.parse(localStorage.getItem("osList")) || [];
     const box = $("#lista");
     box.innerHTML = "";
 
-    lista.slice(0,10).forEach(os=>{
+    lista.slice(0,10).forEach(os => {
       box.innerHTML += `
         <div class="osCard">
           <div class="osHeader">
@@ -141,65 +176,64 @@ class InfoCarOS {
           <div>Placa: ${os.placa} | KM: ${os.km}</div>
           <div>Serviço: ${os.servico}</div>
           <div><strong>Total: R$ ${os.total}</strong></div>
-
-          <hr>
-
-          <div><strong>Descrição:</strong><br>${os.descricao || "-"}</div>
-          <div><strong>Observações:</strong><br>${os.observacoes || "-"}</div>
-          <div><strong>Laudo:</strong><br>${os.laudo || "-"}</div>
         </div>
       `;
     });
   }
 
-  limpar(){
+  // ===============================
+  // 🧹 LIMPAR
+  // ===============================
+  limpar() {
     $("#formOS").reset();
     $("#tarefasBox").innerHTML = "";
     $("#total").value = "";
   }
 
-  initVoice(){
+  // ===============================
+  // 🎤 VOICE
+  // ===============================
+  initVoice() {
     const btn = $("#voiceToggle");
 
-    if(!("webkitSpeechRecognition" in window)){
-      btn.style.display="none";
+    if (!("webkitSpeechRecognition" in window)) {
+      btn.style.display = "none";
       return;
     }
 
     const recognition = new webkitSpeechRecognition();
     recognition.lang = "pt-BR";
 
-    btn.addEventListener("click", ()=>{
+    btn.addEventListener("click", () => {
       recognition.start();
       btn.classList.add("listening");
     });
 
-    recognition.onresult = (event)=>{
+    recognition.onresult = (event) => {
       const texto = event.results[0][0].transcript.toLowerCase();
 
-      if(texto.includes("cliente"))
+      if (texto.includes("cliente"))
         $("#cliente").value = texto.replace("cliente","").trim();
 
-      if(texto.includes("modelo"))
+      if (texto.includes("modelo"))
         $("#modelo").value = texto.replace("modelo","").trim();
 
-      if(texto.includes("placa"))
+      if (texto.includes("placa"))
         $("#placa").value = texto.replace("placa","").trim();
 
-      if(texto.includes("quilometragem"))
+      if (texto.includes("quilometragem"))
         $("#km").value = texto.replace("quilometragem","").trim();
-
-      if(texto.includes("descrição"))
-        $("#descricao").value = texto.replace("descrição","").trim();
 
       btn.classList.remove("listening");
     };
 
-    recognition.onerror = ()=>{
+    recognition.onerror = () => {
       btn.classList.remove("listening");
     };
   }
 
 }
 
-new InfoCarOS();
+document.addEventListener("DOMContentLoaded", () => {
+  new InfoCarOS();
+});
