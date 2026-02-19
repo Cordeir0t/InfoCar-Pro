@@ -1,320 +1,169 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>InfoCar - Ordem de Serviço</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#081862,#00082a);
-  color:#333;
-  padding:20px;
-}
-
-header{
-  background:rgba(0,0,0,0.6);
-  padding:20px;
-  border-radius:15px;
-  margin-bottom:20px;
-  color:white;
-}
-
-header h1{
-  color:#3b82f6;
-}
-
-nav{
-  margin-top:15px;
-  display:flex;
-  gap:15px;
-  flex-wrap:wrap;
-}
-
-nav a{
-  text-decoration:none;
-  color:white;
-  background:#2563eb;
-  padding:8px 15px;
-  border-radius:8px;
-  font-size:14px;
-  transition:0.3s;
-}
-
-nav a:hover{
-  background:#1d4ed8;
-}
-
-.container{
-  max-width:1100px;
-  margin:auto;
-}
-
-.card{
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  margin-bottom:20px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.15);
-}
-
-h2{
-  margin-bottom:20px;
-}
-
-label{
-  display:block;
-  margin:10px 0 5px;
-  font-weight:bold;
-}
-
-input, select, textarea{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-
-textarea{
-  resize:vertical;
-}
-
-.grid-2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
-
-.grid-3{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:15px;
-}
-
-.botoes{
-  display:flex;
-  gap:10px;
-  margin-top:20px;
-}
-
-button{
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:#2563eb;
-  color:white;
-  font-weight:bold;
-  transition:0.3s;
-}
-
-button:hover{
-  background:#1d4ed8;
-}
-
-button.sec{
-  background:#ccc;
-  color:#333;
-}
-
-.osCard{
-  background:#f1f5f9;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:12px;
-}
-
-.osHeader{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-  font-size:14px;
-}
-
-#voiceToggle{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  font-size:1.5em;
-  background:#2563eb;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-}
-
-#voiceToggle.listening{
-  background:#10b981;
-  transform:scale(1.1);
-}
-
-@media(max-width:768px){
-  .grid-2,.grid-3{
-    grid-template-columns:1fr;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfoCar - Ordem de Serviço</title>
+  <link rel="stylesheet" href="/styles/os.css">
 </head>
-
 <body>
+  <header>
+    <h1>InfoCar</h1>
+    <nav>
+      <a href="os.html">Ordens de Serviço</a>
+      <a href="estoque.html">Estoque</a>
+      <a href="clientes.html">Clientes</a>
+      <a href="relatorios.html">Relatórios</a>
+    </nav>
+  </header>
 
-<header>
-  <h1>InfoCar - Sistema Oficina</h1>
+  <main class="container">
+    <form id="formOS">
+      <div class="form-grid">
+        <div class="field">
+          <label>Código OS *</label>
+          <input id="codigoOS" required>
+        </div>
 
-  <nav>
-    <a href="os.html">Ordens de Serviço</a>
-    <a href="estoque.html">Gestão Estoque</a>
-    <a href="clientes.html">Clientes</a>
-    <a href="relatorios.html">Relatórios</a>
-  </nav>
-</header>
+        <div class="field">
+          <label>Status</label>
+          <select id="statusOS">
+            <option>Aberta</option>
+            <option>Em andamento</option>
+            <option>Finalizada</option>
+            <option>Entregue</option>
+          </select>
+        </div>
 
-<main class="container">
+        <div class="field">
+          <label>Responsável *</label>
+          <input id="nome" required>
+        </div>
 
-<form id="formOS">
-<section class="card">
-<h2>Nova Ordem de Serviço</h2>
+        <div class="field">
+          <label>Cliente *</label>
+          <input id="cliente" required>
+        </div>
 
-<div class="grid-2">
-  <div>
-    <label>Código da OS *</label>
-    <input id="codigoOS" required placeholder="OS-001">
-  </div>
-  <div>
-    <label>Status</label>
-    <select id="statusOS">
-      <option>Aberta</option>
-      <option>Em andamento</option>
-      <option>Finalizada</option>
-      <option>Entregue</option>
-    </select>
-  </div>
-</div>
+        <div class="field">
+          <label>País *</label>
+          <select id="pais" required>
+            <option value="" disabled selected>Selecione país</option>
+            <optgroup label="América">
+              <option value="Brasil">Brasil</option>
+              <option value="EUA">EUA</option>
+              <option value="México">México</option>
+            </optgroup>
+            <optgroup label="Europa">
+              <option value="Alemanha">Alemanha</option>
+              <option value="Itália">Itália</option>
+              <option value="França">França</option>
+              <option value="Reino Unido">Reino Unido</option>
+              <option value="Suécia">Suécia</option>
+              <option value="Espanha">Espanha</option>
+            </optgroup>
+            <optgroup label="Ásia">
+              <option value="Japão">Japão</option>
+              <option value="China">China</option>
+              <option value="Coreia do Sul">Coreia do Sul</option>
+              <option value="Índia">Índia</option>
+            </optgroup>
+          </select>
+        </div>
 
-<div class="grid-2">
-  <div>
-    <label>Responsável *</label>
-    <input id="nome" required>
-  </div>
-  <div>
-    <label>Cliente *</label>
-    <input id="cliente" required>
-  </div>
-</div>
+        <div class="field">
+          <label>Marca *</label>
+          <select id="marca" required>
+            <option value="" disabled selected>Selecione marca</option>
+          </select>
+        </div>
 
-<div class="grid-2">
-  <div>
-    <label>País *</label>
-    <select id="pais" required>
-      <option value="">Selecione</option>
-      <option>Brasil</option>
-      <option>Alemanha</option>
-      <option>Japão</option>
-      <option>EUA</option>
-      <option>França</option>
-      <option>Itália</option>
-      <option>Coreia</option>
-      <option>China</option>
-      <option>Reino Unido</option>
-      <option>Suécia</option>
-      <option>Índia</option>
-      <option>Espanha</option>
-    </select>
-  </div>
+        <div class="field">
+          <label>Modelo *</label>
+          <input id="modelo" required>
+        </div>
 
-  <div>
-    <label>Marca *</label>
-    <select id="marca" required></select>
-  </div>
-</div>
+        <div class="field full">
+          <label>Ano *</label>
+          <select id="ano" required></select>
+        </div>
 
-<div class="grid-2">
-  <div>
-    <label>Modelo *</label>
-    <input id="modelo" required>
-  </div>
-  <div>
-    <label>Ano *</label>
-    <input type="number" id="ano" required>
-  </div>
-</div>
+        <div class="field">
+          <label>Placa *</label>
+          <input id="placa" required>
+        </div>
 
-<div class="grid-2">
-  <div>
-    <label>Placa *</label>
-    <input id="placa" required>
-  </div>
-  <div>
-    <label>Quilometragem *</label>
-    <input type="number" id="km" required>
-  </div>
-</div>
-
-<div>
-  <label>Tipo de Serviço *</label>
-  <select id="tipoServico" required>
-    <option value="">Selecione</option>
+        <div class="field">
+          <label>KM *</label>
+          <input type="number" id="km" required>
+        </div>
+<!-- DEPOIS do campo KM, ANTES de Mão de obra -->
+<div class="field">
+  <label>Tipo de Manutenção *</label>
+  <select id="tipoManutencao" required>
+    <option value="" disabled selected>Selecione manutenção</option>
     <option value="oleo">Troca de Óleo</option>
-    <option value="freio">Freio</option>
-    <option value="motor">Motor</option>
+    <option value="filtro">Troca de Filtro(s)</option>
+    <option value="freio">Freios</option>
+    <option value="alinhamento">Alinhamento/Direção</option>
     <option value="suspensao">Suspensão</option>
+    <option value="revisao">Revisão Geral</option>
     <option value="eletrica">Elétrica</option>
-    <option value="ar">Ar Condicionado</option>
-    <option value="revisao">Revisão Completa</option>
+    <option value="arcondicionado">Ar Condicionado</option>
+    <option value="outros">Outros</option>
   </select>
 </div>
 
-<div id="tarefasBox"></div>
-
-<label>Descrição do Serviço</label>
-<textarea id="descricao" rows="4"></textarea>
-
-<label>Observações Importantes</label>
-<textarea id="observacoes" rows="3"></textarea>
-
-<label>Laudo Técnico</label>
-<textarea id="laudo" rows="3"></textarea>
-
-<div class="grid-3">
-  <div>
-    <label>Mão de Obra (R$)</label>
-    <input type="number" id="maoObra" step="0.01">
-  </div>
-  <div>
-    <label>Valor Peças (R$)</label>
-    <input type="number" id="valorPecas" step="0.01">
-  </div>
-  <div>
-    <label>Total (R$)</label>
-    <input type="number" id="total" readonly>
-  </div>
+<div class="field" id="subManutencaoField" style="display: none;">
+  <label>Especificação</label>
+  <select id="subManutencao">
+    <option value="" disabled selected>Selecione especificação</option>
+  </select>
 </div>
 
-<div class="botoes">
-  <button type="submit">Salvar OS</button>
-  <button type="button" id="limparForm" class="sec">Limpar</button>
 </div>
 
-</section>
-</form>
+        <div class="field">
+          <label>Mão de obra R$</label>
+          <input type="number" id="maoObra" step="0.01" min="0">
+        </div>
 
-<section class="card">
-  <h2>OS Recentes</h2>
-  <div id="lista"></div>
-</section>
+        <div class="field">
+          <label>Peças R$</label>
+          <input type="number" id="valorPecas" step="0.01" min="0">
+        </div>
 
-</main>
+        <!-- NOVOS CAMPOS ADICIONADOS -->
+        <div class="field full">
+          <label>Descrição da Manutenção</label>
+          <textarea id="descricaoManutencao" rows="4" placeholder="Ex: Troca de óleo, alinhamento, revisão freios... Detalhe os serviços a serem realizados."></textarea>
+        </div>
 
-<div id="voiceToggle">🎤</div>
+        <div class="field full">
+          <label>Observações / Outras Informações</label>
+          <textarea id="observacoes" rows="4" placeholder="Ex: Problema relatado pelo cliente, histórico anterior, peças pendentes, recomendações..."></textarea>
+        </div>
+        <!-- FIM DOS NOVOS CAMPOS -->
 
-<script src="app.js"></script>
+        <div class="field full total-field">
+          <label>Total R$</label>
+          <input type="number" id="total" readonly>
+        </div>
+      </div>
 
+      <div class="form-actions">
+        <button type="submit">Salvar OS</button>
+        <button type="button" id="limparForm">Limpar</button>
+        <button type="button" id="vozBtn">Reconhecimento Vocal</button>
+      </div>
+    </form>
+
+    <section class="lista-section">
+      <h2>Ordens Recentes</h2>
+      <div id="lista"></div>
+    </section>
+  </main>
+
+  <script src="/scripts/app.js"></script>
 </body>
 </html>
